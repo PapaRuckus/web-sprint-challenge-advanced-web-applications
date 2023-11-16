@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink, Routes, Route, useNavigate } from 'react-router-dom'
 import Articles from './Articles'
 import LoginForm from './LoginForm'
 import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
+import PrivateRoutes from './PrivateRoute'
+import axios from 'axios'
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -18,8 +20,8 @@ export default function App() {
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
-  const redirectToLogin = () => { /* ✨ implement */ }
-  const redirectToArticles = () => { /* ✨ implement */ }
+  const redirectToLogin = () =>  navigate("/")
+  const redirectToArticles = () => navigate("/articles");
 
   const logout = () => {
     // ✨ implement
@@ -36,6 +38,15 @@ export default function App() {
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
+    axios
+      .post("http://localhost:9000/api/login", {username, password})
+      .then((resp) => {
+        console.log(resp);
+        setMessage(resp.data.message);
+      })
+      .catch((err) => {
+        console.log(err)
+      });
   }
 
   const getArticles = () => {
@@ -57,12 +68,11 @@ export default function App() {
   }
 
   const updateArticle = ({ article_id, article }) => {
-    // ✨ implement
-    // You got this!
+    
   }
 
   const deleteArticle = article_id => {
-    // ✨ implement
+    setArticles((prev) => prev.filter((item) => item.id !== article_id))
   }
 
   return (
@@ -78,11 +88,11 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route path="/" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm login={login} />} />
           <Route path="articles" element={
             <>
               <ArticleForm />
-              <Articles />
+              <Articles deleteArticle={deleteArticle}/>
             </>
           } />
         </Routes>
