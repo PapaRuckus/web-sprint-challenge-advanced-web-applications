@@ -62,6 +62,7 @@ export default function App() {
       })
       .catch((err) => {
         console.log(err);
+        setSpinnerOn(false);
       });
   };
 
@@ -85,32 +86,48 @@ export default function App() {
       })
       .catch((err) => {
         console.log(err);
+        setSpinnerOn(false);
       });
   };
-
+  // ✨ implement
+  // The flow is very similar to the `getArticles` function.
+  // You'll know what to do! Use log statements or breakpoints
+  // to inspect the response from the server.
   const postArticle = (article) => {
-    // ✨ implement
-    // The flow is very similar to the `getArticles` function.
-    // You'll know what to do! Use log statements or breakpoints
-    // to inspect the response from the server.
-    // setSpinnerOn(true)
-    console.log("hit it")
+    setSpinnerOn(true);
+    console.log("hit it");
     axiosWithAuth()
-      .post(articlesUrl)
+      .post(articlesUrl, article)
       .then((resp) => {
         console.log(resp);
+        setMessage(resp.data.message);
+        setArticles(resp.data.article);
+        setSpinnerOn(false);
       })
       .catch((err) => {
         console.log(err);
+        setSpinnerOn(false);
       });
   };
 
   const updateArticle = ({ article_id, article }) => {};
 
+  let finalDelete = (article_id) => {
+    setArticles((prev) => prev.filter((item) => item.id !== article_id));
+  };
   const deleteArticle = (article_id) => {
     console.log("delete");
-    // setArticles((prev) => prev.filter((item) => item.id !== article_id));
+    axiosWithAuth()
+      .delete(`http://localhost:9000/api/articles/8`)
+      .then((resp) => {
+        console.log(resp);
+        setMessage(resp.data.message);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+  // data.articles[2];
 
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗

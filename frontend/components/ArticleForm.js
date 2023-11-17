@@ -7,7 +7,7 @@ const initialFormValues = { title: "", text: "", topic: "" };
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues);
   // ✨ where are my props? Destructure them here
-  const { postArticle } = props;
+  const { postArticle, articles } = props;
 
   useEffect(() => {
     // ✨ implement
@@ -26,7 +26,11 @@ export default function ArticleForm(props) {
     // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
-    postArticle()
+   const { text, title, topic } = values;
+
+   // Directly passing values to postArticle
+    postArticle({ text, title, topic });
+    setValues(initialFormValues)
   };
 
   const isDisabled = () => {
@@ -35,7 +39,11 @@ export default function ArticleForm(props) {
     const trimTitle = values.title.trim();
     const trimText = values.text.trim();
 
-    return !(trimTitle.length >= 1 && trimText.length >= 1);
+    return !(
+      trimTitle.length >= 1 &&
+      trimText.length >= 1 &&
+      values.topic !== ""
+    );
   };
 
   return (

@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import PT from "prop-types";
 
 export default function Articles(props) {
-  // ✨ where are my props? Destructure them here
   const { getArticles, articles, updateArticle, deleteArticle } = props;
 
   // ✨ implement conditional logic: if no token exists
@@ -30,10 +29,7 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button
-                    disabled={!updateArticle ? true : false}
-                    onClick={updateArticle}
-                  >
+                  <button disabled={false} onClick={updateArticle}>
                     Edit
                   </button>
                   <button disabled={false} onClick={deleteArticle}>
