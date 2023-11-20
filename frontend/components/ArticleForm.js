@@ -9,12 +9,12 @@ export default function ArticleForm(props) {
   // ✨ where are my props? Destructure them here
   const { postArticle, articles } = props;
 
-  useEffect(() => {
-    // ✨ implement
-    // Every time the `currentArticle` prop changes, we should check it for truthiness:
-    // if it's truthy, we should set its title, text and topic into the corresponding
-    // values of the form. If it's not, we should reset the form back to initial values.
-  });
+  // useEffect(() => {
+  //   // ✨ implement
+  //   // Every time the `currentArticle` prop changes, we should check it for truthiness:
+  //   // if it's truthy, we should set its title, text and topic into the corresponding
+  //   // values of the form. If it's not, we should reset the form back to initial values.
+  // });
 
   const onChange = (evt) => {
     const { id, value } = evt.target;

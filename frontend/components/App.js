@@ -21,7 +21,7 @@ const loginUrl = "http://localhost:9000/api/login";
 export default function App() {
   // ✨ MVP can be achieved with these states
   const [message, setMessage] = useState("");
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState({});
   const [currentArticleId, setCurrentArticleId] = useState();
   const [spinnerOn, setSpinnerOn] = useState(false);
 
@@ -74,34 +74,34 @@ export default function App() {
   // If something goes wrong, check the status of the response:
   // if it's a 401 the token might have gone bad, and we should redirect to login.
   // Don't forget to turn off the spinner!
-  const getArticles = () => {
+  const getArticles = (message) => {
     setSpinnerOn(true);
-    setMessage("");
+    if (!message) {
+      setMessage("")
+    }
     axiosWithAuth()
       .get(articlesUrl)
       .then((resp) => {
-        setMessage(resp.data.message);
         setArticles(resp.data.articles);
         setSpinnerOn(false);
+        if (!message) {
+          setMessage(resp.data.message)
+        }
       })
       .catch((err) => {
         console.log(err);
         setSpinnerOn(false);
       });
   };
-  // ✨ implement
-  // The flow is very similar to the `getArticles` function.
-  // You'll know what to do! Use log statements or breakpoints
-  // to inspect the response from the server.
+  
   const postArticle = (article) => {
     setSpinnerOn(true);
     console.log("hit it");
     axiosWithAuth()
       .post(articlesUrl, article)
       .then((resp) => {
-        console.log(resp);
         setMessage(resp.data.message);
-        setArticles(resp.data.article);
+        articles.push(resp.data.article)
         setSpinnerOn(false);
       })
       .catch((err) => {
@@ -116,19 +116,19 @@ export default function App() {
     setArticles((prev) => prev.filter((item) => item.id !== article_id));
   };
   const deleteArticle = (article_id) => {
-    console.log("delete");
     axiosWithAuth()
-      .delete(`http://localhost:9000/api/articles/8`)
+      .delete(`http://localhost:9000/api/articles/${article_id}`)
       .then((resp) => {
-        console.log(resp);
+        getArticles(resp.data.message)
         setMessage(resp.data.message);
+        
       })
       .catch((err) => {
-        console.log(err);
+        console.log("this is delete", err);
       });
   };
-  // data.articles[2];
 
+ 
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>

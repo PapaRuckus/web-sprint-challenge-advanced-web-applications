@@ -32,7 +32,7 @@ export default function Articles(props) {
                   <button disabled={false} onClick={updateArticle}>
                     Edit
                   </button>
-                  <button disabled={false} onClick={deleteArticle}>
+                  <button disabled={false} onClick={() => deleteArticle(art.article_id)}>
                     Delete
                   </button>
                 </div>
