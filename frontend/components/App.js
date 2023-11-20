@@ -19,23 +19,16 @@ const articlesUrl = "http://localhost:9000/api/articles";
 const loginUrl = "http://localhost:9000/api/login";
 
 export default function App() {
-  // ✨ MVP can be achieved with these states
   const [message, setMessage] = useState("");
-  const [articles, setArticles] = useState({});
+  const [articles, setArticles] = useState([]);
   const [currentArticleId, setCurrentArticleId] = useState();
   const [spinnerOn, setSpinnerOn] = useState(false);
 
-  // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate();
   const redirectToLogin = () => navigate("/");
   const redirectToArticles = () => navigate("/articles");
 
   const logout = () => {
-    // ✨ implement
-    // If a token is in local storage it should be removed,
-    // and a message saying "Goodbye!" should be set in its proper state.
-    // In any case, we should redirect the browser back to the login screen,
-    // using the helper above.
     if (localStorage.getItem("token")) {
       localStorage.removeItem("token");
       setMessage("GoodBye!");
@@ -77,31 +70,30 @@ export default function App() {
   const getArticles = (message) => {
     setSpinnerOn(true);
     if (!message) {
-      setMessage("")
+      setMessage("");
     }
     axiosWithAuth()
       .get(articlesUrl)
       .then((resp) => {
         setArticles(resp.data.articles);
-        setSpinnerOn(false);
         if (!message) {
-          setMessage(resp.data.message)
+          setMessage(resp.data.message);
         }
+        setSpinnerOn(false);
       })
       .catch((err) => {
         console.log(err);
         setSpinnerOn(false);
       });
   };
-  
+
   const postArticle = (article) => {
     setSpinnerOn(true);
-    console.log("hit it");
     axiosWithAuth()
       .post(articlesUrl, article)
       .then((resp) => {
         setMessage(resp.data.message);
-        articles.push(resp.data.article)
+        articles.push(resp.data.article);
         setSpinnerOn(false);
       })
       .catch((err) => {
@@ -110,25 +102,33 @@ export default function App() {
       });
   };
 
-  const updateArticle = ({ article_id, article }) => {};
-
-  let finalDelete = (article_id) => {
-    setArticles((prev) => prev.filter((item) => item.id !== article_id));
-  };
-  const deleteArticle = (article_id) => {
+  const updateArticle = ({ article_id, article }) => {
     axiosWithAuth()
-      .delete(`http://localhost:9000/api/articles/${article_id}`)
+      .put(`http://localhost:9000/api/articles/${article_id}`, article)
       .then((resp) => {
-        getArticles(resp.data.message)
-        setMessage(resp.data.message);
-        
+        console.log(resp);
+        setCurrentArticleId(resp.data.article)
       })
       .catch((err) => {
-        console.log("this is delete", err);
+        console.log(err);
       });
   };
 
- 
+  const deleteArticle = (article_id) => {
+    setSpinnerOn(true);
+    axiosWithAuth()
+      .delete(`http://localhost:9000/api/articles/${article_id}`)
+      .then((resp) => {
+        getArticles(resp.data.message);
+        setMessage(resp.data.message);
+        setSpinnerOn(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setSpinnerOn(false);
+      });
+  };
+
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
@@ -160,6 +160,7 @@ export default function App() {
                     updateArticle={updateArticle}
                     postArticle={postArticle}
                     setCurrentArticleId={setCurrentArticleId}
+                    currentArticle={currentArticleId}
                   />
                   <Articles
                     deleteArticle={deleteArticle}
