@@ -23,6 +23,7 @@ export default function App() {
   const [articles, setArticles] = useState([]);
   const [currentArticleId, setCurrentArticleId] = useState();
   const [spinnerOn, setSpinnerOn] = useState(false);
+  
 
   const navigate = useNavigate();
   const redirectToLogin = () => navigate("/");
@@ -37,12 +38,6 @@ export default function App() {
   };
 
   const login = ({ username, password }) => {
-    // ✨ implement
-    // We should flush the message state, turn on the spinner
-    // and launch a request to the proper endpoint.
-    // On success, we should set the token to local storage in a 'token' key,
-    // put the server success message in its proper state, and redirect
-    // to the Articles screen. Don't forget to turn off the spinner!
     setMessage("");
     setSpinnerOn(true);
     axios
@@ -59,14 +54,6 @@ export default function App() {
       });
   };
 
-  // ✨ implement
-  // We should flush the message state, turn on the spinner
-  // and launch an authenticated request to the proper endpoint.
-  // On success, we should set the articles in their proper state and
-  // put the server success message in its proper state.
-  // If something goes wrong, check the status of the response:
-  // if it's a 401 the token might have gone bad, and we should redirect to login.
-  // Don't forget to turn off the spinner!
   const getArticles = (message) => {
     setSpinnerOn(true);
     if (!message) {
@@ -106,8 +93,10 @@ export default function App() {
     axiosWithAuth()
       .put(`http://localhost:9000/api/articles/${article_id}`, article)
       .then((resp) => {
-        console.log(resp);
-        setCurrentArticleId(resp.data.article)
+        console.log(resp.data);
+        setMessage(resp.data.message);
+        setCurrentArticleId(resp.data.article);
+        // getArticles(resp.data.message);
       })
       .catch((err) => {
         console.log(err);
@@ -160,7 +149,8 @@ export default function App() {
                     updateArticle={updateArticle}
                     postArticle={postArticle}
                     setCurrentArticleId={setCurrentArticleId}
-                    currentArticle={currentArticleId}
+                    currentArticleId={currentArticleId}
+                    getArticles={getArticles}
                   />
                   <Articles
                     deleteArticle={deleteArticle}
@@ -168,6 +158,7 @@ export default function App() {
                     articles={articles}
                     updateArticle={updateArticle}
                     setCurrentArticleId={setCurrentArticleId}
+                    currentArticleId={currentArticleId}
                   />
                 </>
               }

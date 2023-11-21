@@ -6,65 +6,56 @@ const initialFormValues = { title: "", text: "", topic: "" };
 
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues);
-  const { postArticle, updateArticle, setCurrentArticleId, currentArticle } =
+  const { postArticle, updateArticle, setCurrentArticleId, currentArticleId } =
     props;
 
   useEffect(() => {
-    // ✨ implement
-    // Every time the `currentArticle` prop changes, we should check it for truthiness:
-    // if it's truthy, we should set its title, text and topic into the corresponding
-    // values of the form. If it's not, we should reset the form back to initial values.
-    if (currentArticle) {
+    if (currentArticleId) {
       setValues({
-        title: currentArticle.title,
-        text: currentArticle.text,
-        topic: currentArticle.topic,
+        title: currentArticleId.title,
+        text: currentArticleId.text,
+        topic: currentArticleId.topic,
       });
     } else {
       setValues(initialFormValues);
     }
-  }, [currentArticle]);
+  }, [currentArticleId]);
+
+  const onSubmit = (evt) => {
+    evt.preventDefault();
+
+    const { text, title, topic } = values;
+
+    postArticle({ text, title, topic });
+
+    setValues(initialFormValues);
+  };
 
   const onChange = (evt) => {
     const { id, value } = evt.target;
     setValues({ ...values, [id]: value });
   };
 
-  const onSubmit = (evt) => {
-    evt.preventDefault();
-    // ✨ implement
-    // We must submit a new post or update an existing one,
-    // depending on the truthyness of the `currentArticle` prop.
-    const { text, title, topic } = values;
-    const updatedArticle = {
-      title: values.title,
-      text: values.text,
-      topic: values.topic,
-    };
-    updateArticle({
-      article_id: currentArticle.article_id,
-      article: updatedArticle,
-    });
-    postArticle({ text, title, topic });
-    setValues(initialFormValues);
-  };
-
   const isDisabled = () => {
-    const trimTitle = values.title.trim();
-    const trimText = values.text.trim();
+    // const trimTitle = values.title.trim();
+    // const trimText = values.text.trim();
 
-    return !(
-      trimTitle.length >= 1 &&
-      trimText.length >= 1 &&
-      values.topic !== ""
-    );
+    // return !(
+    //   trimTitle.length >= 1 &&
+    //   trimText.length >= 1 &&
+    //   values.topic !== ""
+    // );
+  };
+  const onCancelEdit = () => {
+    setCurrentArticleId(null);
+    setValues({ title: "", text: "", topic: "" });
   };
 
   return (
     // ✨ fix the JSX: make the heading display either "Edit" or "Create"
     // and replace Function.prototype with the correct function
     <form id="form" onSubmit={onSubmit}>
-      <h2>Create Article</h2>
+      <h2>{!currentArticleId ? "Create Article" : "Edit Article"}</h2>
       <input
         maxLength={50}
         onChange={onChange}
@@ -86,11 +77,11 @@ export default function ArticleForm(props) {
         <option value="Node">Node</option>
       </select>
       <div className="button-group">
-        <button disabled={isDisabled()} id="submitArticle">
+        <button type="submit " disabled={isDisabled()} id="submitArticle">
           Submit
         </button>
-        {currentArticle ? (
-          <button onClick={() => setValues(initialFormValues)}>
+        {currentArticleId ? (
+          <button type="button" onClick={onCancelEdit}>
             Cancel edit
           </button>
         ) : null}

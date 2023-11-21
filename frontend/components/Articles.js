@@ -1,17 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import PT from "prop-types";
 
 export default function Articles(props) {
-  const { getArticles, articles, updateArticle, deleteArticle, setCurrentArticleId } = props;
+  const {
+    getArticles,
+    articles,
+    updateArticle,
+    deleteArticle,
+    setCurrentArticleId,
+    currentArticleId,
+  } = props;
 
   useEffect(() => {
     getArticles();
   }, []);
 
+  const isDisabled = () => {
+    if (currentArticleId) {
+      return true;
+    } else false;
+  };
+
   return (
-    // ✨ fix the JSX: replace `Function.prototype` with actual functions
-    // and use the articles prop to generate articles
     <div className="articles">
       <h2>Articles</h2>
       {!articles.length
@@ -26,18 +37,13 @@ export default function Articles(props) {
                 </div>
                 <div>
                   <button
-                    disabled={false}
-                    onClick={() =>
-                      updateArticle({
-                        article_id: art.article_id,
-                        article: art,
-                      })
-                    }
+                    disabled={isDisabled()}
+                    onClick={() => setCurrentArticleId(art)}
                   >
                     Edit
                   </button>
                   <button
-                    disabled={false}
+                    disabled={isDisabled()}
                     onClick={() => deleteArticle(art.article_id)}
                   >
                     Delete
