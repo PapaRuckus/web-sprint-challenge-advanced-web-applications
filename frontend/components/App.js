@@ -23,7 +23,6 @@ export default function App() {
   const [articles, setArticles] = useState([]);
   const [currentArticleId, setCurrentArticleId] = useState();
   const [spinnerOn, setSpinnerOn] = useState(false);
-  
 
   const navigate = useNavigate();
   const redirectToLogin = () => navigate("/");
@@ -79,6 +78,7 @@ export default function App() {
     axiosWithAuth()
       .post(articlesUrl, article)
       .then((resp) => {
+        console.log("postArticle");
         setMessage(resp.data.message);
         articles.push(resp.data.article);
         setSpinnerOn(false);
@@ -96,7 +96,8 @@ export default function App() {
         console.log(resp.data);
         setMessage(resp.data.message);
         setCurrentArticleId(resp.data.article);
-        // getArticles(resp.data.message);
+        getArticles(resp.data.message);
+        setCurrentArticleId(null);
       })
       .catch((err) => {
         console.log(err);

@@ -26,7 +26,21 @@ export default function ArticleForm(props) {
 
     const { text, title, topic } = values;
 
-    postArticle({ text, title, topic });
+    if (currentArticleId) {
+      const updatedArticle = {
+        title: values.title,
+        text: values.text,
+        topic: values.topic,
+      };
+
+      updateArticle({
+        article_id: currentArticleId.article_id,
+        article: updatedArticle,
+      });
+    } else {
+      postArticle({ text, title, topic });
+      setValues(initialFormValues);
+    }
 
     setValues(initialFormValues);
   };
@@ -37,14 +51,14 @@ export default function ArticleForm(props) {
   };
 
   const isDisabled = () => {
-    // const trimTitle = values.title.trim();
-    // const trimText = values.text.trim();
+    const trimTitle = values.title.trim();
+    const trimText = values.text.trim();
 
-    // return !(
-    //   trimTitle.length >= 1 &&
-    //   trimText.length >= 1 &&
-    //   values.topic !== ""
-    // );
+    return !(
+      trimTitle.length >= 1 &&
+      trimText.length >= 1 &&
+      values.topic !== ""
+    );
   };
   const onCancelEdit = () => {
     setCurrentArticleId(null);
